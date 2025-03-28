@@ -1,4 +1,4 @@
-<h1>1️⃣ - 1️⃣0️⃣0️⃣</h1>
+<h1>🧮 1-100</h1>
 <p>Focalizate y sigue la cadena de números aleatorios. <br />
 Juego para practicar la memoria, reflejos y agudeza visual.</p>
 <div align="center">
