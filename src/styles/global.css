@@ -1,10 +1,16 @@
 @import 'tailwindcss';
+@import '@fontsource-variable/inter';
 
 html,
 body {
-  margin: 0;
-  width: 100%;
-  height: 100%;
   background-color: #f0f0f0;
+  font-family: 'inter', sans-serif;
+  height: 100%;
+  margin: 0;
   touch-action: manipulation;
+  width: 100%;
+}
+
+#modal {
+  background-color: rgba(0, 0, 0, 0.75);
 }
