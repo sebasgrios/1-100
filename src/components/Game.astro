@@ -1,0 +1,166 @@
+<div
+	class="h-svh flex flex-col items-center justify-evenly gap-2 lg:gap-4 max-w-3xl mx-auto lg:px-6 py-2 lg:py-4"
+	id="container"
+>
+	<div class="text-5xl select-none" id="countdown">00:00</div>
+	<table class="flex-1 w-full border-spacing-0.5 border-separate" id="table">
+	</table>
+	<button
+		class="text-2xl cursor-pointer border px-8 py-2 bg-white hover:bg-gray-200 select-none"
+		id="reset-button"
+	>
+		Reset
+	</button>
+</div>
+
+<script>
+	const generateRandomNumbers = () => {
+		const numbers = Array.from({ length: 100 }, (_, i) => i + 1);
+
+		for (let i = numbers.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			[numbers[i], numbers[j]] = [numbers[j], numbers[i]];
+		}
+
+		return numbers;
+	};
+
+	document.addEventListener("DOMContentLoaded", () => {
+		const countdownElement = document.getElementById("countdown");
+		const table = document.getElementById("table");
+		const resetButton = document.getElementById("reset-button");
+
+		let interval = 0;
+		let countdown = 300; // 5 minutes in seconds
+		let counter = 1;
+		let maximum_counter = 100;
+		let fail = false;
+		let index = 0;
+
+		if (countdownElement === null) {
+			console.error("Countdown element not found");
+			return;
+		}
+		if (table === null) {
+			console.error("Table element not found");
+			return;
+		}
+		if (resetButton === null) {
+			console.error("Reset button not found");
+			return;
+		}
+
+		const getCountdown = (
+			minutes: number = Math.floor(countdown / 60),
+			seconds: number = countdown % 60,
+		) => {
+			return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+		};
+
+		const startTimer = () => {
+			let timer = countdown - 1;
+
+			interval = setInterval(() => {
+				const minutes = Math.floor(timer / 60);
+				const seconds = timer % 60;
+
+				countdownElement.textContent = getCountdown(minutes, seconds);
+
+				if (--timer < 0) {
+					countdownElement.classList.add("text-red-500", "font-bold");
+					fail = true;
+					clearInterval(interval);
+					alertLostGame();
+				}
+			}, 1000);
+		};
+
+		const resetTimer = () => {
+			clearInterval(interval);
+			countdownElement.classList.remove("text-red-500", "font-bold");
+			countdownElement.textContent = getCountdown();
+		};
+
+		const generateTable = () => {
+			for (let i = 0; i < Math.sqrt(maximum_counter); i++) {
+				const row = document.createElement("tr");
+
+				for (let j = 0; j < Math.sqrt(maximum_counter); j++) {
+					const cell = document.createElement("td");
+					const number = randomNumbers[index++];
+
+					cell.classList.add(
+						"border",
+						"cursor-pointer",
+						"text-center",
+						"font-bold",
+						"bg-white",
+						"hover:bg-gray-200",
+						"w-1/10",
+						"text-lg",
+						"lg:text-xl",
+						"select-none",
+					);
+
+					cell.addEventListener("click", () => {
+						if (fail) {
+							return;
+						}
+
+						cell.classList.remove("bg-white", "hover:bg-gray-200");
+
+						if (number === counter) {
+							if (counter === 1) {
+								startTimer();
+							}
+
+							cell.classList.add("bg-green-500", "hover:bg-green-500");
+							counter++;
+						} else {
+							countdownElement.classList.add("text-red-500", "font-bold");
+							cell.classList.add("bg-red-500", "hover:bg-red-500");
+							fail = true;
+							clearInterval(interval);
+							alertLostGame();
+						}
+					});
+
+					cell.textContent = `${number}`;
+					row.appendChild(cell);
+				}
+
+				table.appendChild(row);
+			}
+		};
+
+		const resetTable = () => {
+			table.innerHTML = "";
+			counter = 1;
+			fail = false;
+			index = 0;
+		};
+
+		const alertLostGame = () => {
+			alert(`Perdiste, intento: ${counter - 1}/${maximum_counter}`);
+		};
+
+		countdownElement.textContent = getCountdown();
+		let randomNumbers = generateRandomNumbers();
+		generateTable();
+
+		resetButton.addEventListener("click", () => {
+			randomNumbers = generateRandomNumbers();
+
+			resetTable();
+			generateTable();
+			resetTimer();
+		});
+
+		document.addEventListener("keydown", (event) => {
+			if (event.ctrlKey && event.key === "f") {
+				event.preventDefault();
+				alert("La búsqueda está deshabilitada para evitar tramposos.");
+			}
+		});
+	});
+</script>
